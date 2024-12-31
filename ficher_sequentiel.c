@@ -1,5 +1,14 @@
 
 #include "ficher_sequentiel.h"
+#include <ctype.h>
+int estUnNombre(const char *chaine) {
+    for (int i = 0; chaine[i] != '\0'; i++) {
+        if (!isdigit(chaine[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 int verifierPseudoExiste(const char *pseudo) {
     FILE *f = fopen(FICHIER_PSEUDOS, "r");

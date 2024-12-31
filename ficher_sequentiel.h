@@ -9,5 +9,6 @@
 
 int verifierPseudoExiste(const char *pseudo);
 void enregistrerPseudo(const char *pseudo);
+int estUnNombre(const char *chaine);
 
 #endif

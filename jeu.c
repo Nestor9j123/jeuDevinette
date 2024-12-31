@@ -122,15 +122,24 @@ float calculerEcartType(int *tentatives, int n) {
     partie.nbTentatives = nbTentatives;
     partie.ecartType = calculerEcartType(partie.tentatives, nbTentatives);
     enregistrerPartie(&partie);
-}
-void lancerJeu() {
+}void lancerJeu() {
     setlocale(LC_ALL, "fr_FR.UTF-8");
     srand(time(NULL));
 
     char pseudo[50];
-    printf("Entrez votre pseudo : ");
-    scanf("%49s", pseudo);
+    do {
+        printf("Entrez votre pseudo : ");
+        scanf("%49s", pseudo);
 
+        // Vérifiez si le pseudo est un nombre
+        if (estUnNombre(pseudo)) {
+            printf("Le pseudo ne peut pas être un nombre. Veuillez entrer un pseudo valide.\n");
+        } else {
+            break; // Le pseudo est valide, on sort de la boucle
+        }
+    } while (1);
+
+    // Vérifier si le pseudo existe déjà
     if (verifierPseudoExiste(pseudo)) {
         printf("Bienvenue de retour, %s !\n", pseudo);
     } else {
@@ -138,6 +147,7 @@ void lancerJeu() {
         enregistrerPseudo(pseudo);
     }
 
+    // Lancer le menu principal (le reste de la logique ne change pas)
     Niveau niveau;
     int borneMax, tentativesMax;
     char rejouer = 'y'; // Variable pour gérer la rejouabilité
