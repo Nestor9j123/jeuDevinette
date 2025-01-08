@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define FICHIER_PSEUDOS "pseudos.txt"
+#define FICHIER_SCORES "scores.txt"
 
 int verifierPseudoExiste(const char *pseudo);
 void enregistrerPseudo(const char *pseudo);

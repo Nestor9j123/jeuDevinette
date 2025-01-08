@@ -1,21 +1,19 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <locale.h>
-#include <math.h>
+
 #include "jeu.h"
 
+// Génère un nombre aléatoire entre 1 et borneMax
 int genererNombre(int borneMax) {
-    return rand() % borneMax + 1; // Génère un nombre entre 1 et borneMax
+    return rand() % borneMax + 1;
 }
+
+// Fonction pour choisir le niveau et les paramètres
 Niveau choisirNiveau(int *borneMax, int *tentativesMax) {
     int choix;
     printf("\nChoisissez un niveau :\n");
     printf("1. Débutant (1-10, 5 tentatives)\n");
-    printf("2. Moyen (1-50, 10 tentatives)\n");
+    printf("2. Moyen (1-50, 8 tentatives)\n");
     printf("3. Légende (1-100, 15 tentatives)\n");
-    printf("4. Ultime (1-1000, 20 tentatives)\n");
+    printf("4. Ultime (1-1000, 10 tentatives)\n");
     printf("5. Personnalisé\n");
     printf("Votre choix : ");
     scanf("%d", &choix);
@@ -27,7 +25,7 @@ Niveau choisirNiveau(int *borneMax, int *tentativesMax) {
             return NIVEAU_DEBUTANT;
         case 2:
             *borneMax = 50;
-            *tentativesMax = 10;
+            *tentativesMax = 8;
             return NIVEAU_MOYEN;
         case 3:
             *borneMax = 100;
@@ -35,7 +33,7 @@ Niveau choisirNiveau(int *borneMax, int *tentativesMax) {
             return NIVEAU_LEGENDE;
         case 4:
             *borneMax = 1000;
-            *tentativesMax = 20;
+            *tentativesMax = 10;
             return NIVEAU_ULTIME;
         case 5:
             printf("Entrez la borne maximale : ");
@@ -57,6 +55,8 @@ Niveau choisirNiveau(int *borneMax, int *tentativesMax) {
     }
 }
 
+
+// Affiche un message de félicitations basé sur les tentatives
 void afficherMessageFelicitations(int nbTentatives) {
     if (nbTentatives <= 3) {
         printf("Félicitations ! Vous êtes un super voyant !\n");
@@ -69,6 +69,7 @@ void afficherMessageFelicitations(int nbTentatives) {
     }
 }
 
+// Fonction principale pour jouer une partie
 void jouerPartie(const char *pseudo, Niveau niveau, int borneMax, int tentativesMax) {
     Partie partie;
     strcpy(partie.pseudo, pseudo);
@@ -77,22 +78,49 @@ void jouerPartie(const char *pseudo, Niveau niveau, int borneMax, int tentatives
     strftime(partie.dateHeure, sizeof(partie.dateHeure), "%Y-%m-%d %H:%M:%S", localtime(&now));
 
     int nombreADeviner = genererNombre(borneMax);
-    int tentative, nbTentatives = 0;
+    int tentative = -1, nbTentatives = 0;
+    int tempsRestant;
 
     printf("Devinez le nombre (entre 1 et %d). Vous avez %d tentatives :\n", borneMax, tentativesMax);
     while (nbTentatives < tentativesMax) {
-        printf("Tentative %d : ", nbTentatives + 1);
-        if (scanf("%d", &tentative) != 1) {
-            printf("Entrée invalide. Veuillez entrer un nombre.\n");
-            while (getchar() != '\n'); // Vider le buffer
-            continue;
+        printf("Tentative %d : Vous avez 10 secondes pour répondre...\n", nbTentatives + 1);
+        tempsRestant = 10;
+
+        // Gestion du temps limite avec un décompte en direct
+        while (tempsRestant > 0) {
+            printf("\rTemps restant : %d secondes ", tempsRestant); // Affiche sur la même ligne
+            fflush(stdout); // Force l'affichage immédiat
+            if (_kbhit()) { // Vérifie si une touche a été pressée
+                if (scanf("%d", &tentative) == 1) {
+                    break; // Quitte la boucle de temps si une tentative est valide
+                } else {
+                    printf("\nEntrée invalide. Veuillez entrer un nombre.\n");
+                    while (getchar() != '\n'); // Vider le buffer
+                }
+            }
+            Sleep(1000); // Attente de 1 seconde
+            tempsRestant--;
+        }
+
+        // Si le temps est écoulé
+        if (tempsRestant <= 0) {
+            printf("\nTemps écoulé pour cette tentative !\n");
+            nbTentatives++;
+            continue; // Passe à la prochaine tentative
         }
 
         partie.tentatives[nbTentatives++] = tentative;
 
         if (tentative == nombreADeviner) {
-            printf("Félicitations ! Vous avez deviné le nombre en %d tentatives.\n", nbTentatives);
+            printf("\nFélicitations ! Vous avez deviné le nombre en %d tentatives.\n", nbTentatives);
             afficherMessageFelicitations(nbTentatives);
+             // Enregistrer le score
+            Score score;
+            strcpy(score.pseudo, pseudo);
+            score.nbTentatives = nbTentatives;
+            score.ecartType = calculerEcartType(partie.tentatives, nbTentatives);
+            strcpy(score.dateHeure, partie.dateHeure);
+            enregistrerScore(&score);
             break;
         } else if (tentative < nombreADeviner) {
             printf("Plus grand !\n");
@@ -102,9 +130,15 @@ void jouerPartie(const char *pseudo, Niveau niveau, int borneMax, int tentatives
     }
 
     if (nbTentatives >= tentativesMax) {
-        printf("Vous avez épuisé vos %d tentatives. Le nombre était %d. Bonne chance la prochaine fois !\n", tentativesMax, nombreADeviner);
+        printf("\nVous avez épuisé vos %d tentatives. Le nombre était %d. Bonne chance la prochaine fois !\n", tentativesMax, nombreADeviner);
     }
 
+    partie.nbTentatives = nbTentatives;
+    partie.ecartType = calculerEcartType(partie.tentatives, nbTentatives);
+    enregistrerPartie(&partie);
+}
+
+// Calcule l'écart type des tentatives
 float calculerEcartType(int *tentatives, int n) {
     if (n == 0) return 0.0;
 
@@ -119,11 +153,58 @@ float calculerEcartType(int *tentatives, int n) {
     }
     return sqrt(variance / n);
 }
-    partie.nbTentatives = nbTentatives;
-    partie.ecartType = calculerEcartType(partie.tentatives, nbTentatives);
-    enregistrerPartie(&partie);
-}void lancerJeu() {
-    setlocale(LC_ALL, "fr_FR.UTF-8");
+void enregistrerScore(const Score *score) {
+    FILE *f = fopen(FICHIER_SCORES, "a");
+    if (!f) {
+        printf("Erreur lors de l'ouverture du fichier des scores.\n");
+        return;
+    }
+    fprintf(f, "%s;%d;%.2f;%s\n", score->pseudo, score->nbTentatives, score->ecartType, score->dateHeure);
+    fclose(f);
+}
+
+void consulterScores() {
+    FILE *f = fopen(FICHIER_SCORES, "r");
+    if (!f) {
+        printf("Aucun score enregistré pour l'instant.\n");
+        return;
+    }
+
+    // Chargement des scores en mémoire
+    Score scores[100];
+    int nbScores = 0;
+
+    while (fscanf(f, "%[^;];%d;%f;%[^\n]\n",
+                  scores[nbScores].pseudo,
+                  &scores[nbScores].nbTentatives,
+                  &scores[nbScores].ecartType,
+                  scores[nbScores].dateHeure) == 4) {
+        nbScores++;
+    }
+    fclose(f);
+
+    // Tri des scores du meilleur au moins bon (par nombre de tentatives)
+    for (int i = 0; i < nbScores - 1; i++) {
+        for (int j = i + 1; j < nbScores; j++) {
+            if (scores[i].nbTentatives > scores[j].nbTentatives) {
+                Score temp = scores[i];
+                scores[i] = scores[j];
+                scores[j] = temp;
+            }
+        }
+    }
+
+    // Affichage des scores
+    printf("\n \t\t--- Classement des scores ---\n");
+    for (int i = 0; i < nbScores; i++) {
+        printf("%d. %s - Tentatives : %d, Écart-type : %.2f, Date : %s\n",
+               i + 1, scores[i].pseudo, scores[i].nbTentatives, scores[i].ecartType, scores[i].dateHeure);
+    }
+}
+
+
+// Lancer le jeu (menu principal)
+void lancerJeu() {
     srand(time(NULL));
 
     char pseudo[50];
@@ -147,7 +228,6 @@ float calculerEcartType(int *tentatives, int n) {
         enregistrerPseudo(pseudo);
     }
 
-    // Lancer le menu principal (le reste de la logique ne change pas)
     Niveau niveau;
     int borneMax, tentativesMax;
     char rejouer = 'y'; // Variable pour gérer la rejouabilité
@@ -157,7 +237,8 @@ float calculerEcartType(int *tentatives, int n) {
         printf("\nMenu :\n");
         printf("1. Choisir un niveau et commencer une partie\n");
         printf("2. Consulter l'historique\n");
-        printf("3. Quitter\n");
+        printf("3. Consulter les scores\n"); // Nouvelle option
+        printf("4. Quitter\n");
         printf("Votre choix : ");
         fflush(stdin);
         scanf("%d", &choix);
@@ -177,12 +258,16 @@ float calculerEcartType(int *tentatives, int n) {
                 consulterHistorique(pseudo);
                 break;
 
-            case 3: // Quitter
+            case 3: // Consultation des scores
+                consulterScores();
+                break;
+
+            case 4: // Quitter
                 printf("Merci d'avoir joué ! À bientôt !\n");
                 return;
 
             default:
                 printf("Choix invalide. Veuillez réessayer.\n");
         }
-    } while (choix != 3);
+    } while (choix != 4);
 }
