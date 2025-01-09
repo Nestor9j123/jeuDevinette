@@ -14,7 +14,7 @@ Niveau choisirNiveau(int *borneMax, int *tentativesMax) {
     printf("2. Moyen (1-50, 8 tentatives)\n");
     printf("3. Légende (1-100, 15 tentatives)\n");
     printf("4. Ultime (1-1000, 10 tentatives)\n");
-    printf("5. Personnalisé\n");
+    printf("5. Personnalisé (Vous pouvez definir votre borne et le nombre \n de tentatives que vous voulez faire pour trouver le nombre caché)\n");
     printf("Votre choix : ");
     scanf("%d", &choix);
 
@@ -201,73 +201,129 @@ void consulterScores() {
                i + 1, scores[i].pseudo, scores[i].nbTentatives, scores[i].ecartType, scores[i].dateHeure);
     }
 }
+int verifierPseudoEtMotDePasse(const char *pseudo, const char *motDePasse) {
+    FILE *f = fopen("joueurs.txt", "r");
+    if (!f) {
+        printf("Aucun joueur enregistré pour l'instant.\n");
+        return 0;
+    }
+
+    char ligne[100];
+    while (fgets(ligne, sizeof(ligne), f)) {
+        char pseudoFichier[50], motDePasseFichier[50];
+        sscanf(ligne, "%[^;];%s", pseudoFichier, motDePasseFichier);
+
+        if (strcmp(pseudoFichier, pseudo) == 0) {
+            if (strcmp(motDePasseFichier, motDePasse) == 0) {
+                fclose(f);
+                return 1; // Le pseudo et le mot de passe correspondent
+            } else {
+                fclose(f);
+                return -1; // Le pseudo existe mais le mot de passe est incorrect
+            }
+        }
+    }
+
+    fclose(f);
+    return 0; // Le pseudo n'existe pas
+}
+void enregistrerJoueur(const char *pseudo, const char *motDePasse) {
+    FILE *f = fopen("joueurs.txt", "a");
+    if (!f) {
+        printf("Erreur lors de l'ouverture du fichier des joueurs.\n");
+        return;
+    }
+    fprintf(f, "%s;%s\n", pseudo, motDePasse);
+    fclose(f);
+}
+
 
 
 // Lancer le jeu (menu principal)
 void lancerJeu() {
     srand(time(NULL));
 
-    char pseudo[50];
+     char pseudo[50], motDePasse[50];
+    int connexionOK = 0;
+
     do {
         printf("Entrez votre pseudo : ");
         scanf("%49s", pseudo);
 
-        // Vérifiez si le pseudo est un nombre
-        if (estUnNombre(pseudo)) {
-            printf("Le pseudo ne peut pas être un nombre. Veuillez entrer un pseudo valide.\n");
-        } else {
-            break; // Le pseudo est valide, on sort de la boucle
-        }
-    } while (1);
+        printf("Entrez votre mot de passe : ");
+        scanf("%49s", motDePasse);
 
-    // Vérifier si le pseudo existe déjà
-    if (verifierPseudoExiste(pseudo)) {
-        printf("Bienvenue de retour, %s !\n", pseudo);
-    } else {
-        printf("Nouveau joueur détecté. Enregistrement...\n");
-        enregistrerPseudo(pseudo);
-    }
+        int resultat = verifierPseudoEtMotDePasse(pseudo, motDePasse);
+        if (resultat == 1) {
+            printf("Bon  retour, %s !\n", pseudo);
+            connexionOK = 1;
+        } else if (resultat == -1) {
+            printf("Mot de passe incorrect. Veuillez réessayer.\n");
+        } else {
+            printf("Nouveau joueur détecté. Enregistrement...\n");
+            enregistrerJoueur(pseudo, motDePasse);
+            connexionOK = 1;
+        }
+    } while (!connexionOK);
+
 
     Niveau niveau;
     int borneMax, tentativesMax;
-    char rejouer = 'y'; // Variable pour gérer la rejouabilité
-    int choix;
+ int choix;
 
-    do {
-        printf("\nMenu :\n");
-        printf("1. Choisir un niveau et commencer une partie\n");
-        printf("2. Consulter l'historique\n");
-        printf("3. Consulter les scores\n"); // Nouvelle option
-        printf("4. Quitter\n");
-        printf("Votre choix : ");
-        fflush(stdin);
-        scanf("%d", &choix);
+do {
+    printf("\nMenu :\n");
+    printf("1. Choisir un niveau et commencer une partie\n");
+    printf("2. Consulter l'historique\n");
+    printf("3. Consulter les scores\n"); // Nouvelle option
+    printf("4. Quitter\n");
+    printf("Votre choix : ");
+    fflush(stdin);
+    scanf("%d", &choix);
 
-        switch (choix) {
-            case 1: // Choix d'un niveau et lancement immédiat
-                niveau = choisirNiveau(&borneMax, &tentativesMax);
-                do {
-                    jouerPartie(pseudo, niveau, borneMax, tentativesMax);
-                    printf("Voulez-vous rejouer avec le même niveau ? (y/n) : ");
+    switch (choix) {
+        case 1: { // Choix d'un niveau et lancement immédiat
+            niveau = choisirNiveau(&borneMax, &tentativesMax);
+
+            char rejouer = 'y'; // Initialisation correcte de la variable "rejouer"
+            do {
+                jouerPartie(pseudo, niveau, borneMax, tentativesMax);
+
+                // Demande si l'utilisateur veut rejouer
+                printf("\nVoulez-vous rejouer ? (y/n) : ");
+                fflush(stdin);
+                scanf(" %c", &rejouer);
+
+                if (rejouer == 'y' || rejouer == 'Y') {
+                    // Demande si on garde le même niveau ou si on recommence
+                    char changerNiveau = 'n';
+                    printf("Voulez-vous changer de niveau ? (y/n) : ");
                     fflush(stdin);
-                    scanf(" %c", &rejouer);
-                } while (rejouer == 'y' || rejouer == 'Y');
-                break;
+                    scanf(" %c", &changerNiveau);
 
-            case 2: // Consultation de l'historique
-                consulterHistorique(pseudo);
-                break;
+                    if (changerNiveau == 'y' || changerNiveau == 'Y') {
+                        // Permet de choisir un nouveau niveau
+                        niveau = choisirNiveau(&borneMax, &tentativesMax);
+                    }
+                }
+            } while (rejouer == 'y' || rejouer == 'Y'); // La variable "rejouer" est maintenant utilisée ici
 
-            case 3: // Consultation des scores
-                consulterScores();
-                break;
-
-            case 4: // Quitter
-                printf("Merci d'avoir joué ! À bientôt !\n");
-                return;
-
-            default:
-                printf("Choix invalide. Veuillez réessayer.\n");
+            break;
         }
-    } while (choix != 4);
+        case 2: // Consultation de l'historique
+            consulterHistorique(pseudo);
+            break;
+
+        case 3: // Consultation des scores
+            consulterScores();
+            break;
+
+        case 4: // Quitter
+            printf("Merci d'avoir joué ! À bientôt !\n");
+            return;
+
+        default:
+            printf("Choix invalide. Veuillez réessayer.\n");
+    }
+} while (choix != 4);
 }

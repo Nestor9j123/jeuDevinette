@@ -22,12 +22,18 @@ typedef enum {
     NIVEAU_PERSONNALISE
 } Niveau;
 // Structure pour représenter un score
-typedef struct {
+typedef struct Score Score;
+struct Score{
     char pseudo[50];
     int nbTentatives;
     float ecartType;
     char dateHeure[20];
-} Score;
+};
+typedef struct Joueur Joueur;
+struct Joueur {
+    char pseudo[50];
+    char motDePasse[50];
+};
 
 // Fonction pour jouer une partie
 void jouerPartie(const char *pseudo, Niveau niveau, int borneMax, int tentativesMax);
@@ -37,5 +43,7 @@ void lancerJeu();
 void consulterHistorique(const char *pseudo);
 void consulterScores(); // Nouvelle fonction pour consulter les scores
 void enregistrerScore(const Score *score); // Enregistrer un score
+int verifierPseudoEtMotDePasse(const char *pseudo, const char *motDePasse);
+void enregistrerJoueur(const char *pseudo, const char *motDePasse);
 
 #endif
