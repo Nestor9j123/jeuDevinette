@@ -1,4 +1,13 @@
 
+/*
+Titre :Differentes implementation necessaire
+Authors: KPADJA & EKOM
+Ecole : EPL
+Filière : LP- GL
+Année Academique : 2024 - 2025
+
+
+*/
 #include "jeu.h"
 
 // Génère un nombre aléatoire entre 1 et borneMax

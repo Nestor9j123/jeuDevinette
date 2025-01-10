@@ -1,4 +1,12 @@
+/*
+Titre :Entete et prototype pour les fichier acces sequentiel
+Authors: KPADJA & EKOM
+Ecole : EPL
+Filière : LP- GL
+Année Academique : 2024 - 2025
 
+
+*/
 #ifndef FICHIER_SEQUENTIEL_H
 #define FICHIER_SEQUENTIEL_H
 

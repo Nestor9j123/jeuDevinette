@@ -1,4 +1,12 @@
+/*
+Titre :Entete et prototype  pour les fichier acces random
+Authors: KPADJA & EKOM
+Ecole : EPL
+Filière : LP- GL
+Année Academique : 2024 - 2025
 
+
+*/
 #ifndef FICHIER_RANDOM_H
 #define FICHIER_RANDOM_H
 

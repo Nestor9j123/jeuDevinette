@@ -1,4 +1,13 @@
 
+/*
+Titre :fichier a accès sequentiel
+Authors: KPADJA & EKOM
+Ecole : EPL
+Filière : LP- GL
+Année Academique : 2024 - 2025
+
+
+*/
 #include "ficher_sequentiel.h"
 #include <ctype.h>
 int estUnNombre(const char *chaine) {

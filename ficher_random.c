@@ -1,3 +1,12 @@
+/*
+Titre :fichier a accès random
+Authors: KPADJA & EKOM
+Ecole : EPL
+
+
+
+*/
+
 #include "ficher_random.h"
 
 void enregistrerPartie(Partie *partie) {

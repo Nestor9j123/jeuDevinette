@@ -1,3 +1,12 @@
+/*
+Titre :Entete necessaire
+Authors: KPADJA & EKOM
+Ecole : EPL
+Filière : LP- GL
+Année Academique : 2024 - 2025
+
+
+*/
 #ifndef JEU_H
 #define JEU_H
 #include <stdio.h>

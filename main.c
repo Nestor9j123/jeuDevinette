@@ -1,8 +1,20 @@
+/*
+Titre :Jeu de devinette
+Authors: KPADJA & EKOM
+Ecole : EPL
+Filière : LP- GL
+Année Academique : 2024 - 2025
+
+
+*/
+
+
+
 #include "jeu.h"
 #include <locale.h>
 
 int main() {
-    system("color F2");
+
      setlocale(LC_CTYPE, "");
 
     printf("\t\t\t\t----------- OBJECTIF DU JEU-------- \n");
