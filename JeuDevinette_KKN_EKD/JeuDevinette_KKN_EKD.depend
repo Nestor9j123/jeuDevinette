@@ -1,0 +1,97 @@
+# depslib dependency file v1.0
+1733237598 source:c:\users\devnestor\documents\nestor\ficher_random.c
+	"ficher_random.h"
+
+1733237191 c:\users\devnestor\documents\nestor\ficher_random.h
+	<stdio.h>
+	<string.h>
+	<time.h>
+	<math.h>
+
+1733237598 source:c:\users\devnestor\documents\nestor\ficher_sequentiel.c
+	"ficher_sequentiel.h"
+
+1733237385 c:\users\devnestor\documents\nestor\ficher_sequentiel.h
+	<stdio.h>
+	<string.h>
+
+1733236998 source:c:\users\devnestor\documents\nestor\jeu.c
+	"jeu.h"
+
+1733237650 c:\users\devnestor\documents\nestor\jeu.h
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	"ficher_random.h"
+
+1736549239 source:c:\users\devnestor\documents\deviinettenombre\ficher_random.c
+	"ficher_random.h"
+
+1736549393 c:\users\devnestor\documents\deviinettenombre\ficher_random.h
+	<stdio.h>
+	<string.h>
+	<time.h>
+	<math.h>
+
+1736549273 source:c:\users\devnestor\documents\deviinettenombre\ficher_sequentiel.c
+	"ficher_sequentiel.h"
+	<ctype.h>
+
+1736549398 c:\users\devnestor\documents\deviinettenombre\ficher_sequentiel.h
+	<stdio.h>
+	<string.h>
+
+1736549306 source:c:\users\devnestor\documents\deviinettenombre\jeu.c
+	"jeu.h"
+
+1736549323 c:\users\devnestor\documents\deviinettenombre\jeu.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<locale.h>
+	<math.h>
+	<windows.h>
+	<conio.h>
+	<time.h>
+	"ficher_random.h"
+	"ficher_sequentiel.h"
+
+1736763022 source:c:\users\devnestor\documents\deviinettenombre\main.c
+	"jeu.h"
+	<locale.h>
+
+1736549239 source:c:\users\devnestor\documents\jeudevinette_kkn_ekd\ficher_random.c
+	"ficher_random.h"
+
+1736549393 c:\users\devnestor\documents\jeudevinette_kkn_ekd\ficher_random.h
+	<stdio.h>
+	<string.h>
+	<time.h>
+	<math.h>
+
+1736941464 source:c:\users\devnestor\documents\jeudevinette_kkn_ekd\ficher_sequentiel.c
+	<ctype.h>
+	"ficher_sequentiel.h"
+
+1736549398 c:\users\devnestor\documents\jeudevinette_kkn_ekd\ficher_sequentiel.h
+	<stdio.h>
+	<string.h>
+
+1736941436 source:c:\users\devnestor\documents\jeudevinette_kkn_ekd\main.c
+	<locale.h>
+	"jeu.h"
+
+1736549323 c:\users\devnestor\documents\jeudevinette_kkn_ekd\jeu.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<locale.h>
+	<math.h>
+	<windows.h>
+	<conio.h>
+	<time.h>
+	"ficher_random.h"
+	"ficher_sequentiel.h"
+
